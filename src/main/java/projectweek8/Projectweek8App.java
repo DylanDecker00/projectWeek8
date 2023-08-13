@@ -14,9 +14,13 @@ public class Projectweek8App {
 	private Scanner scanner = new Scanner(System.in);
 			private ProjectService projectService = new ProjectService();
 			
+			private Project curProject;
 			private List<String> operations = List.of(
-					"1) Add a project"
-					);
+				    "1) Add a project",
+				    "2) List projects",
+				    "3) Select a project"
+				);
+
 			
 			public static void main(String[] args) {
 				new Projectweek8App().processUserSelections();
@@ -37,7 +41,13 @@ public class Projectweek8App {
 						case 1:
 							createProject();
 							break;
-							
+						case 2:
+						    listProjects();
+						    break;
+						case 3:
+							selectProject();
+							break;
+
 							default:
 								System.out.println("\n" + selection + " in not a valid selection, try again.");
 								break;
@@ -45,9 +55,19 @@ public class Projectweek8App {
 					}
 					catch(Exception e) {
 						System.out.println("\nError: " + e + " Try again.");
+						e.printStackTrace();
 					}
 					}
 			}
+				private void selectProject() {
+				                    listProjects();
+				                    Integer projectId = getIntInput("Enter a project ID to select a project");
+				                    curProject = null;
+				                    curProject = projectService.fetchProjectById(projectId);
+				
+				
+			}
+
 				private void createProject() {
 				    String projectName = getStringInput("Enter the project name");
 				    BigDecimal estimatedHours = getDecimalInput("Enter the estimated hours");
@@ -116,7 +136,20 @@ public class Projectweek8App {
 			private void printOperations() {
 				System.out.println("\nThere are the available selections. Press the Enter Key to exit.");
 				operations.forEach(line -> System.out.println(" " + line));
+				
+				if(Objects.isNull(curProject)) {
+					System.out.println("\nYou are not working with a project.");
+				}
+				else {
+					System.out.println("\nYou are working with project: " + curProject);
+				}
 			
+			}
+			private void listProjects() {
+			    List<Project> projects = projectService.fetchAllProjects();
+
+			    System.out.println("\nProjects:");
+			    projects.forEach(project -> System.out.println("  " + project.getProjectId() + ": " + project.getProjectName()));
 			}
 
 
